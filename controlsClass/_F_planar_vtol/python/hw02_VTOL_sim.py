@@ -7,8 +7,8 @@ from dataPlotter import dataPlotter
 
 # instantiate reference input classes
 reference = signalGenerator(amplitude=0.5, frequency=0.2)
-zRef = signalGenerator(amplitude=1.0, frequency=0.1, y_offset=5)
-hRef = signalGenerator(amplitude=1.0, frequency=0.2, y_offset=5)
+zRef = signalGenerator(amplitude=1.0, frequency=0.1, y_offset=2)
+hRef = signalGenerator(amplitude=1.0, frequency=0.2, y_offset=2)
 thetaRef = signalGenerator(amplitude=np.pi, frequency=np.pi/10)
 fRef = signalGenerator(amplitude=5, frequency=.5)
 
