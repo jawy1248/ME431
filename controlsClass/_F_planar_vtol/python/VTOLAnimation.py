@@ -3,6 +3,8 @@ import matplotlib.patches as mpatches
 import numpy as np
 import VTOLParam as P
 
+import matplotlib
+matplotlib.use('qtagg')  # requires pyqt or pyside
 
 class VTOLAnimation:
     def __init__(self):

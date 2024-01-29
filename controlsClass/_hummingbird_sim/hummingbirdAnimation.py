@@ -7,6 +7,8 @@ import pyqtgraph as pg
 import pyqtgraph.opengl as gl
 import pyqtgraph.Vector as Vector
 
+import matplotlib
+matplotlib.use('qtagg')  # requires pyqt or pyside
 
 class HummingbirdAnimation:
     def __init__(self):
