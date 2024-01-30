@@ -5,8 +5,8 @@ import massParam as P
 # if you are having difficulty with the graphics, 
 # try using one of the following backends.  
 # See https://matplotlib.org/stable/users/explain/backends.html
-# import matplotlib
-# matplotlib.use('qtagg')  # requires pyqt or pyside
+import matplotlib
+matplotlib.use('qtagg')  # requires pyqt or pyside
 # matplotlib.use('ipympl')  # requires ipympl
 # matplotlib.use('gtk3agg')  # requires pyGObject and pycairo
 # matplotlib.use('gtk4agg')  # requires pyGObject and pycairo
