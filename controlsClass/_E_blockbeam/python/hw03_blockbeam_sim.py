@@ -1,19 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import massParam as P
+import blockbeamParam as P
 from signalGenerator import signalGenerator
-from massAnimation import massAnimation
+from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
-from massDynamics import massDynamics
+from blockbeamDynamics import blockbeamDynamics
 
 # instantiate reference input classes
 reference = signalGenerator(amplitude=0.5, frequency=0.2)
-fRef = signalGenerator(amplitude=5, frequency=0.1)
+fRef = signalGenerator(amplitude=0.1, frequency=10, y_offset=11.496)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()
-animation = massAnimation()
-mass = massDynamics()
+animation = blockbeamAnimation()
+blockbeam = blockbeamDynamics()
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
@@ -21,14 +21,14 @@ while t < P.t_end:  # main simulation loop
     t_next_plot = t + P.t_plot
     # update controls and dynamics
     while t < t_next_plot:
-        # set variables and update dynamics
+        # set variables
         r = 0
         u = fRef.sin(t)
-        mass.update(u)
+        blockbeam.update(u)
         t = t + P.Ts
     # update animation
-    animation.update(mass.state)
-    dataPlot.update(t, r, mass.state, u)
+    animation.update(blockbeam.state)
+    dataPlot.update(t, r, blockbeam.state, u)
     plt.pause(0.001)  # allow time for animation to draw
 
 # Keeps the program from closing until the user presses a button.

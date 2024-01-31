@@ -62,7 +62,8 @@ FullEOM = LHS - RHS
 result = simplify(sp.solve(FullEOM, (zdd, thetadd)))
 zdd_eom = result[zdd]
 thetadd_eom = result[thetadd]
-display("EOM(s):")
-display(Math(vlatex(zdd_eom)))
-display(Math(vlatex(thetadd_eom)))
+
+eoms = Matrix([[zdd_eom],[thetadd_eom]])
+display(Math(vlatex(eoms)))
+
 # %%
