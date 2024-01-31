@@ -8,7 +8,7 @@ from blockbeamDynamics import blockbeamDynamics
 
 # instantiate reference input classes
 reference = signalGenerator(amplitude=0.5, frequency=0.2)
-fRef = signalGenerator(amplitude=0.1, frequency=10, y_offset=11.496)
+fRef = signalGenerator(amplitude=0.1, frequency=10, y_offset=11.515)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()

@@ -16,7 +16,7 @@ height = width*0.25  # height of block
 z0 = length*0.5 # initial block position,m
 theta0 = 0.0  # initial beam angle,rads
 zdot0 = 0.0  # initial speed of block along beam, m/s
-thetadot0 = 0.01 # initial angular speed of the beam,rads/s
+thetadot0 = 0.0 # initial angular speed of the beam,rads/s
 
 # Simulation Parameters
 t_start = 0  # Start time of simulation
