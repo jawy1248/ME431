@@ -14,9 +14,9 @@ F_wind = 0.0 # wind disturbance force is zero in initial homeworks
 length = 10.0
 
 # Initial Conditions
-z0 = 2.0  # initial lateral position
+z0 = 3.0  # initial lateral position
 h0 = 3.0  # initial altitude
-theta0 = -np.pi/128 # initial roll angle
+theta0 = 0.0 # initial roll angle
 zdot0 = 0.0  # initial lateral velocity
 hdot0 = 0.0  # initial climb rate
 thetadot0 = 0.0  # initial roll rate
@@ -25,7 +25,7 @@ target0 = 0.0
 # Simulation Parameters
 t_start = 0 # Start time of simulation
 t_end = 10  # End time of simulation
-Ts = 0.01  # sample time for simulation
+Ts = 0.001  # sample time for simulation
 t_plot = 0.1 # the plotting and animation is updated at this rate
 
 # saturation limits

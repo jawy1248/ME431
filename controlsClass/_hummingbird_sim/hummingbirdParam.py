@@ -21,7 +21,7 @@ J1x = 0.000189
 J1y = 0.001953
 J1z = 0.001894
 m2 = 0.4717
-J2x = 0.000231
+J2x = 0.00231
 J2y = 0.003274
 J2z = 0.003416
 m3 = 0.1905
@@ -40,6 +40,6 @@ t_end = 100.0  # End time of simulation
 Ts = 0.01  # sample time for simulation
 t_plot = 0.1  # the plotting and animation is updated at this rate
 # saturation limits
-force_max = 2.0                # Max force N
-torque_max = 5.0                # Max torque, Nm
+force_max = 500.0                # Max force N
+torque_max = 500.0                # Max torque, Nm
 

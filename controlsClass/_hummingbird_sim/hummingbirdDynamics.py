@@ -54,28 +54,56 @@ class HummingbirdDynamics:
         psidot = state[5][0]
         pwm_left = u[0][0]
         pwm_right = u[1][0]
+
+        # For easy acces
+        phiS = np.sin(phi)
+        phiS2 = np.sin(phi)**2
+        thetaS = np.sin(theta)
+        thetaS2 = np.sin(theta)**2
+        phiC = np.cos(phi)
+        phiC2 = np.cos(phi)**2
+        thetaC = np.cos(theta)
+        thetaC2 = np.cos(theta)**2
+        ml1 = self.m1*(self.ell1**2)
+        ml2 = self.m2*(self.ell2**2)
+
         # The equations of motion go here
-        M22 = 
-        M23 = 
-        M33 = 
-        M = np.array([[, , ],
-                      [, , ],
-                      [, , ]
+        M22 = ml1 + ml2 + self.J2y + self.J1y*phiC2 + self.J1z*phiS2
+        M23 = (self.J1y - self.J1z)*phiS*phiC*thetaC
+        M33 = (ml1 + ml2 + self.J2z + self.J1y*phiS2 + self.J1z*phiC2)*thetaC2 + (self.J1x + self.J2x)*thetaS2 + self.m3*((self.ell3x**2) + (self.ell3y**2)) + self.J3z
+        M = np.array([[self.J1x, 0, -self.J1x*thetaS],
+                      [0, M22, M23],
+                      [-self.J1x*thetaS, M23, M33]
                       ])
-        C = np.array([[],
-                      [],
-                      [],
+        
+        N33 = 2*(self.J1x + self.J2x - ml1 - ml2 - self.J2z - self.J1y*phiS2 - self.J1z*phiC2)*thetaS*thetaC
+
+        line1 = (thetadot**2)*(self.J1z - self.J1y)*phiS*phiC*thetaS
+        line2 = ((self.J1y - self.J1z)*(phiC2 - phiS2) - self.J1x)*thetaC*phidot*thetadot
+        line3 = (self.J1z - self.J1y)*phiS*phiC*thetaS*(thetadot**2) + 2*(self.J1y - self.J1z)*phiS*phiC*phidot*psidot
+        line4 = 2*((-ml1) - ml2 - self.J2z + self.J1x + self.J2x + self.J1y*phiS2 + self.J1z*phiS2)*thetaS*thetaC*thetadot*psidot
+
+        C = np.array([[(self.J1y - self.J1z)*phiS*phiC*((thetadot**2) - thetaC2*(psidot**2)) + ((self.J1y - self.J1z)*(phiC2 - phiS2) - self.J1x)*thetaC*thetadot*psidot],
+                      [2*(self.J1z - self.J1y)*phiS*phiC*phidot*thetadot + ((self.J1y - self.J1z)*(phiC2 - phiS2) + self.J1x)*thetaC*phidot*psidot - 0.5*N33*(psidot**2)],
+                      [line1 + line2 + line3 + line4],
                      ])
-        partialP = np.array([[],
-                             [],
-                             [],
+        
+        partialP = np.array([[0],
+                             [(self.m1*self.ell1 + self.m2*self.ell2)*P.g*thetaC],
+                             [0],
                             ])
-        force = P.km * (pwm_left + pwm_right)
-        torque = self.d * P.km * (pwm_left - pwm_right)
-        tau = np.array([[],
-                        [],
-                        []])
-        B = 
+        
+        fl = P.km * pwm_left
+        fr = P.km * pwm_right
+        force = fl + fr
+        torque = self.d * (fl - fr)
+        tau = np.array([[torque],
+                        [self.ellT*(force)*phiC],
+                        [self.ellT*(force)*thetaC*phiS - torque*thetaS]])
+        
+        beta = 0.001
+        B = beta*np.identity(3)
+
         qddot = np.linalg.inv(M) @ (-C - partialP + tau - B @ state[3:6])
         phiddot = qddot[0][0]
         thetaddot = qddot[1][0]
@@ -91,20 +119,19 @@ class HummingbirdDynamics:
 
     def h(self):
         # return y = h(x)
-        phi = 
-        theta = 
-        psi = 
+        phi = self.state[0][0]
+        theta = self.state[1][0]
+        psi = self.state[2][0]
         y = np.array([[phi], [theta], [psi]])
         return y
 
     def rk4_step(self, u):
         # Integrate ODE using Runge-Kutta RK4 algorithm
-        F1 = self.f(self.state, u)
-        F2 = self.f(self.state + P.Ts / 2 * F1, u)
-        F3 = self.f(self.state + P.Ts / 2 * F2, u)
-        F4 = self.f(self.state + P.Ts * F3, u)
-        self.state += P.Ts / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
-
+        F1 = (self.f(self.state, u)).astype(float)
+        F2 = (self.f(self.state + P.Ts / 2 * F1, u)).astype(float)
+        F3 = (self.f(self.state + P.Ts / 2 * F2, u)).astype(float)
+        F4 = (self.f(self.state + P.Ts * F3, u)).astype(float)
+        self.state = self.state + (P.Ts / 6 * (F1 + 2 * F2 + 2 * F3 + F4))
 
 def saturate(u, limit):
     for i in range(0, u.shape[0]):
