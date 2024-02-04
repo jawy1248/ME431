@@ -15,23 +15,23 @@ class HummingbirdDynamics:
         ])
 
         # vary the actual physical parameters
-        self.ell1 = P.ell1 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.ell2 = P.ell2 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.ell3x = P.ell3x * (1.+alpha*(2.*np.random.rand()-1.))
-        self.ell3y = P.ell3y * (1.+alpha*(2.*np.random.rand()-1.))
-        self.ell3z = P.ell3z * (1.+alpha*(2.*np.random.rand()-1.))
-        self.ellT = P.ellT * (1.+alpha*(2.*np.random.rand()-1.))
-        self.d = P.d * (1.+alpha*(2.*np.random.rand()-1.))
-        self.m1 = P.m1 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.m2 = P.m2 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.m3 = P.m3 * (1.+alpha*(2.*np.random.rand()-1.))
-        self.J1x = P.J1x * (1.+alpha*(2.*np.random.rand()-1.))
+        self.ell1 = P.ell1 * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.ell2 = P.ell2 * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.ell3x = P.ell3x * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.ell3y = P.ell3y * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.ell3z = P.ell3z * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.ellT = P.ellT * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.d = P.d * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.m1 = P.m1 * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.m2 = P.m2 * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.m3 = P.m3 * (1. + alpha * (2. * np.random.rand() - 1.))
+        self.J1x = P.J1x * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J1y = P.J1y * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J1z = P.J1z * (1. + alpha * (2. * np.random.rand() - 1.))
-        self.J2x = P.J2x * (1.+alpha*(2.*np.random.rand()-1.))
+        self.J2x = P.J2x * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J2y = P.J2y * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J2z = P.J2z * (1. + alpha * (2. * np.random.rand() - 1.))
-        self.J3x = P.J3x * (1.+alpha*(2.*np.random.rand()-1.))
+        self.J3x = P.J3x * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J3y = P.J3y * (1. + alpha * (2. * np.random.rand() - 1.))
         self.J3z = P.J3z * (1. + alpha * (2. * np.random.rand() - 1.))
  
@@ -57,51 +57,49 @@ class HummingbirdDynamics:
         pwm_right = u[1][0]
 
         # For easy acces
-        phiS = np.sin(phi)
-        phiS2 = np.sin(phi)**2
-        thetaS = np.sin(theta)
-        thetaS2 = np.sin(theta)**2
-        phiC = np.cos(phi)
-        phiC2 = np.cos(phi)**2
-        thetaC = np.cos(theta)
-        thetaC2 = np.cos(theta)**2
+        sinP = np.sin(phi)
+        sinP2 = np.sin(phi)**2
+        sinT = np.sin(theta)
+        sinT2 = np.sin(theta)**2
+        cosP = np.cos(phi)
+        cosP2 = np.cos(phi)**2
+        cosT = np.cos(theta)
+        cosT2 = np.cos(theta)**2
 
         ml1 = self.m1*(self.ell1**2)
         ml2 = self.m2*(self.ell2**2)
 
         # The equations of motion go here
-        M22 = ml1 + ml2 + self.J2y + self.J1y*phiC2 + self.J1z*phiS2
-        M23 = (self.J1y - self.J1z)*phiS*phiC*thetaC
-        M33 = (ml1 + ml2 + self.J2z + self.J1y*phiS2 + self.J1z*phiC2)*thetaC2 + (self.J1x + self.J2x)*thetaS2 + self.m3*((self.ell3x**2) + (self.ell3y**2)) + self.J3z
-        M = np.array([[self.J1x, 0, -self.J1x*thetaS],
-                      [0, M22, M23],
-                      [-self.J1x*thetaS, M23, M33]
+        M22 = ml1 + ml2 + self.J2y + (self.J1y*cosP2) + (self.J1z*sinP2)
+        M23 = (self.J1y - self.J1z)*sinP*cosP*cosT
+        M33 = ((ml1 + ml2 + self.J2z + (self.J1y*sinP2) + (self.J1z*cosP2))*cosT2) + ((self.J1x + self.J2x)*sinT2) + (self.m3*((self.ell3x**2) + (self.ell3y**2))) + self.J3z
+        M = np.array([[self.J1x,           0,  -(self.J1x*sinT)],
+                      [0,                 M22,       M23],
+                      [-(self.J1x*sinT),  M23,       M33]
                       ])
         
-        N33 = 2*(self.J1x + self.J2x - ml1 - ml2 - self.J2z - self.J1y*phiS2 - self.J1z*phiC2)*thetaS*thetaC
+        N33 = 2*(self.J1x + self.J2x - ml1 - ml2 - self.J2z - (self.J1y*sinP2) - (self.J1z*cosP2))*sinT*cosT
 
-        line1 = (thetadot**2)*(self.J1z - self.J1y)*phiS*phiC*thetaS
-        line2 = ((self.J1y - self.J1z)*(phiC2 - phiS2) - self.J1x)*thetaC*phidot*thetadot
-        line3 = (self.J1z - self.J1y)*phiS*phiC*thetaS*(thetadot**2) + 2*(self.J1y - self.J1z)*phiS*phiC*phidot*psidot
-        line4 = 2*((-ml1) - ml2 - self.J2z + self.J1x + self.J2x + self.J1y*phiS2 + self.J1z*phiS2)*thetaS*thetaC*thetadot*psidot
+        line1 = (thetadot**2)*(self.J1z - self.J1y)*sinP*cosP*sinT
+        line2 = (((self.J1y - self.J1z)*(cosP2 - sinP2)) - self.J1x)*cosT*phidot*thetadot
+        line3 = ((self.J1z - self.J1y)*sinP*cosP*sinT*(thetadot**2)) + (2*(self.J1y - self.J1z)*sinP*cosP*phidot*psidot)
+        line4 = 2*(-ml1 - ml2 - self.J2z + self.J1x + self.J2x + (self.J1y*sinP2) + (self.J1z*sinP2))*sinT*cosT*thetadot*psidot
 
-        C = np.array([[(self.J1y - self.J1z)*phiS*phiC*((thetadot**2) - thetaC2*(psidot**2)) + ((self.J1y - self.J1z)*(phiC2 - phiS2) - self.J1x)*thetaC*thetadot*psidot],
-                      [2*(self.J1z - self.J1y)*phiS*phiC*phidot*thetadot + ((self.J1y - self.J1z)*(phiC2 - phiS2) + self.J1x)*thetaC*phidot*psidot - 0.5*N33*(psidot**2)],
+        C = np.array([[(self.J1y - self.J1z)*sinP*cosP*((thetadot**2) - cosT2*(psidot**2)) + ((self.J1y - self.J1z)*(cosP2 - sinP2) - self.J1x)*cosT*thetadot*psidot],
+                      [(2*(self.J1z - self.J1y)*sinP*cosP*phidot*thetadot) + ((((self.J1y - self.J1z)*(cosP2 - sinP2)) + self.J1x)*cosT*phidot*psidot) - (0.5*N33*(psidot**2))],
                       [line1 + line2 + line3 + line4],
                      ])
         
         partialP = np.array([[0],
-                             [(self.m1*self.ell1 + self.m2*self.ell2)*P.g*thetaC],
+                             [((self.m1*self.ell1) + (self.m2*self.ell2))*P.g*cosT],
                              [0],
                             ])
         
-        fl = P.km * pwm_left
-        fr = P.km * pwm_right
-        force = fl + fr
-        torque = self.d * (fl - fr)
+        force = P.km * (pwm_left + pwm_right)
+        torque = self.d * P.km * (pwm_left - pwm_right)
         tau = np.array([[torque],
-                        [self.ellT*(force)*phiC],
-                        [self.ellT*(force)*thetaC*phiS - torque*thetaS]])
+                        [self.ellT*(force)*cosP],
+                        [(self.ellT*(force)*cosT*sinP) - (torque*sinT)]])
         
         beta = 0.001
         B = beta*np.eye(3)
