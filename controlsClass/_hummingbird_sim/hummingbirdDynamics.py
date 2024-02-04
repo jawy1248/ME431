@@ -9,7 +9,7 @@ class HummingbirdDynamics:
             [P.phi0],  # roll angle
             [P.theta0],  # pitch angle
             [P.psi0],  # yaw angle
-            [P.phi0],  # roll rate
+            [P.phidot0],  # roll rate
             [P.thetadot0],  # pitch rate
             [P.psidot0],  # yaw rate
         ])
@@ -52,6 +52,7 @@ class HummingbirdDynamics:
         phidot = state[3][0]
         thetadot = state[4][0]
         psidot = state[5][0]
+        
         pwm_left = u[0][0]
         pwm_right = u[1][0]
 
@@ -64,6 +65,7 @@ class HummingbirdDynamics:
         phiC2 = np.cos(phi)**2
         thetaC = np.cos(theta)
         thetaC2 = np.cos(theta)**2
+
         ml1 = self.m1*(self.ell1**2)
         ml2 = self.m2*(self.ell2**2)
 
@@ -102,7 +104,7 @@ class HummingbirdDynamics:
                         [self.ellT*(force)*thetaC*phiS - torque*thetaS]])
         
         beta = 0.001
-        B = beta*np.identity(3)
+        B = beta*np.eye(3)
 
         qddot = np.linalg.inv(M) @ (-C - partialP + tau - B @ state[3:6])
         phiddot = qddot[0][0]
