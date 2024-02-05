@@ -7,8 +7,8 @@ from dataPlotter import DataPlotter
 from hummingbirdDynamics import HummingbirdDynamics
 
 # instantiate reference input classes
-fLeft_ref = SignalGenerator(amplitude=0.1, frequency=0.5, y_offset=0.27)
-fRight_ref = SignalGenerator(amplitude=0.1, frequency=0.51, y_offset=0.27)
+fLeft_ref = SignalGenerator(amplitude=0.1, frequency=0.5, y_offset=0.3)
+fRight_ref = SignalGenerator(amplitude=0.1, frequency=0.51, y_offset=0.3)
 
 # instantiate the simulation plots and animation
 dataPlot = DataPlotter()
