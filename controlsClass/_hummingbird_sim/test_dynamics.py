@@ -47,7 +47,7 @@ for initial_state, input, true_state in TC.dynamics_test_cases:
         print(f"Test #{numTests} passed!")
     else:
         print(f"\nTesting failed on test #{numTests}!")
-        break
+        # breaks
 
 # display final results of the tests
 if all_tests_passed:
