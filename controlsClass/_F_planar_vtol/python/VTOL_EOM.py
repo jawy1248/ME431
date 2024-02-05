@@ -2,7 +2,7 @@
 
 # Imports
 import sympy as sp
-from sympy import sin, cos, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
+from sympy import sin, cos, asin, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
 from sympy.physics.vector import dynamicsymbols
 from sympy.physics.vector.printing import vpprint, vlatex
 from IPython.display import Math, display
@@ -57,10 +57,11 @@ hd = h.diff(t)
 hdd = hd.diff(t)
 thetad = theta.diff(t)
 thetadd = thetad.diff(t)
-f1, f3 = symbols('f1, f3')
+# f1, f3 = symbols('f1, f3')
+F, tau = symbols('F, tau')
 
 # Get the RHS
-RHS = Matrix([[-sin(theta)*(f1+f3) - mu*zd], [cos(theta)*(f1+f3)], [d*(f3-f1)]])
+RHS = Matrix([[-sin(theta)*F - mu*zd], [cos(theta)*F], [tau]])
 
 # Get whole EOM
 FullEOM = LHS - RHS
@@ -73,5 +74,19 @@ thetadd_eom = result[thetadd]
 
 eoms = Matrix([[zdd_eom],[hdd_eom],[thetadd_eom]])
 display(Math(vlatex(eoms)))
+
+svf = Matrix([[zdd_eom], [hdd_eom], [thetadd_eom], [zd], [hd], [thetad]])
+states = Matrix([[zd], [hd], [thetad], [z], [h], [theta]])
+inputs = Matrix([[F], [tau]])
+
+A = svf.jacobian(states)
+B = svf.jacobian(inputs)
+
+A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (tau, 0.0), (theta, asin(0)), (F, g*(2*m1 + m2))]))
+B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (tau, 0.0), (theta, asin(0)), (F, g*(2*m1 + m2))]))
+
+display("Linear EOMs (A) then (B):")
+display(Math(vlatex(A_lin)))
+display(Math(vlatex(B_lin)))
 
 # %%

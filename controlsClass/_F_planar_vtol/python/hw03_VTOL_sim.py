@@ -28,15 +28,15 @@ while t < P.t_end:  # main simulation loop
         hr = 0
         f1 = fr_Ref.sin(t)
         f2 = fl_Ref.sin(t)
-        f = np.array([[-np.sin(t)*(f1 + f2)], [np.cos(t)*(f1+f2)]])
-        tau = P.d*(f1-f2)
+        force = f1 + f2
+        tau = P.d*(f1 - f2)
         u = np.array([[f1],[f2]])
         VTOL.update(u)
         t = t + P.Ts
     
     # update animation
     animation.update(VTOL.state)
-    dataPlot.update(t, VTOL.state, zr, hr, f[0][0], tau)
+    dataPlot.update(t, VTOL.state, zr, hr, force, tau)
     plt.pause(0.001)  # allow time for animation to draw
 
 # Keeps the program from closing until the user presses a button.

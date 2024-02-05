@@ -49,6 +49,23 @@ FullEOM = LHS - RHS
 # Solve and display result
 result = simplify(sp.solve(FullEOM, (zdd)))
 zdd_eom = result[zdd]
-display("EOM:")
-display(Math(vlatex(zdd_eom)))
+eoms = Matrix([[zdd_eom]])
+display("EOMs:")
+display(Math(vlatex(eoms)))
+
+svf = Matrix([[zd],[zdd_eom]])
+states = Matrix([[z], [zd]])
+inputs = Matrix([[F]])
+
+A = svf.jacobian(states)
+B = svf.jacobian(inputs)
+
+# A_lin = simplify(A.subs([(z, 0.), (zd, 0.) (F, 0.)]))
+# B_lin = simplify(B.subs([(z, 0.), (zd, 0.) (F, 0.)]))
+
+display("Linear EOMs (A) then (B):")
+display(Math(vlatex(A)))
+display(Math(vlatex(B)))
+
+
 # %%
