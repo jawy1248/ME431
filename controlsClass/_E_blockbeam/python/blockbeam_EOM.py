@@ -2,7 +2,7 @@
 
 # Imports
 import sympy as sp
-from sympy import sin, cos, asin, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
+from sympy import sin, cos, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
 from sympy.physics.vector import dynamicsymbols
 from sympy.physics.vector.printing import vpprint, vlatex
 from IPython.display import Math, display
@@ -73,8 +73,8 @@ inputs = Matrix([[F]])
 A = svf.jacobian(states)
 B = svf.jacobian(inputs)
 
-A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (theta, asin(0))]))
-B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (theta, asin(0))]))
+A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell)), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8), (z, 0)]))
+B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell)), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8), (z, 0)]))
 
 display("Linear EOMs (A) then (B):")
 display(Math(vlatex(A_lin)))

@@ -87,11 +87,11 @@ class HummingbirdDynamics:
 
     def rk4_step(self, u):
         # Integrate ODE using Runge-Kutta RK4 algorithm
-        F1 = self.f(self.state, u)
-        F2 = self.f(self.state + P.Ts / 2 * F1, u)
-        F3 = self.f(self.state + P.Ts / 2 * F2, u)
-        F4 = self.f(self.state + P.Ts * F3, u)
-        self.state += P.Ts / 6 * (F1 + 2 * F2 + 2 * F3 + F4)
+        F1 = (self.f(self.state, u)).astype(float)
+        F2 = (self.f(self.state + P.Ts / 2 * F1, u)).astype(float)
+        F3 = (self.f(self.state + P.Ts / 2 * F2, u)).astype(float)
+        F4 = (self.f(self.state + P.Ts * F3, u)).astype(float)
+        self.state = self.state + (P.Ts / 6 * (F1 + 2 * F2 + 2 * F3 + F4))
 
     def _M(self, state):
         # FIXME Fill in this function
@@ -102,6 +102,7 @@ class HummingbirdDynamics:
         sinP2 = np.sin(phi)**2
         sinT = np.sin(theta)
         sinT2 = np.sin(theta)**2
+
         cosP = np.cos(phi)
         cosP2 = np.cos(phi)**2
         cosT = np.cos(theta)
@@ -113,12 +114,12 @@ class HummingbirdDynamics:
         # Fill out M22, M23, and M33
         M22 = ml1 + ml2 + self.J2y + (self.J1y*cosP2) + (self.J1z*sinP2)
         M23 = (self.J1y - self.J1z)*sinP*cosP*cosT
-        M33 = ((ml1 + ml2 + self.J2z + (self.J1y*sinP2) + (self.J1z*cosP2))*cosT2) + ((self.J1x + self.J2x)*sinT2) + (self.m3*((self.ell3x**2) + (self.ell3y**2))) + self.J3z
+        M33 = (ml1 + ml2 + self.J2z + (self.J1y*sinP2) + (self.J1z*cosP2))*cosT2 + (self.J1x + self.J2x)*sinT2 + self.m3*((self.ell3x**2) + (self.ell3y**2)) + self.J3z
 
         # Return the M matrix
-        return np.array([[self.J1x,           0,  -(self.J1x*sinT)],
-                      [0,                 M22,       M23],
-                      [-(self.J1x*sinT),  M23,       M33]
+        return np.array([[self.J1x,      0,  -self.J1x*sinT],
+                      [0,               M22,       M23],
+                      [-self.J1x*sinT,  M23,       M33]
                       ])
 
     def _C(self, state):
@@ -133,6 +134,7 @@ class HummingbirdDynamics:
         sinP = np.sin(phi)
         sinP2 = np.sin(phi)**2
         sinT = np.sin(theta)
+
         cosP = np.cos(phi)
         cosP2 = np.cos(phi)**2
         cosT = np.cos(theta)
@@ -141,15 +143,15 @@ class HummingbirdDynamics:
         ml1 = self.m1*(self.ell1**2)
         ml2 = self.m2*(self.ell2**2)
 
-        N33 = 2*(self.J1x + self.J2x - ml1 - ml2 - self.J2z - (self.J1y*sinP2) - (self.J1z*cosP2))*sinT*cosT
+        N33 = 2*(self.J1x + self.J2x - ml1 - ml2 - self.J2z - self.J1y*sinP2 - self.J1z*cosP2)*sinT*cosT
 
         line1 = (thetadot**2)*(self.J1z - self.J1y)*sinP*cosP*sinT
-        line2 = (((self.J1y - self.J1z)*(cosP2 - sinP2)) - self.J1x)*cosT*phidot*thetadot
-        line3 = ((self.J1z - self.J1y)*sinP*cosP*sinT*(thetadot**2)) + (2*(self.J1y - self.J1z)*sinP*cosP*phidot*psidot)
-        line4 = 2*(-ml1 - ml2 - self.J2z + self.J1x + self.J2x + (self.J1y*sinP2) + (self.J1z*sinP2))*sinT*cosT*thetadot*psidot
+        line2 = ((self.J1y - self.J1z)*(cosP2 - sinP2) - self.J1x)*cosT*phidot*thetadot
+        line3 = (self.J1z - self.J1y)*sinP*cosP*sinT*(thetadot**2) + 2*(self.J1y - self.J1z)*sinP*cosP*phidot*psidot
+        line4 = 2*(-ml1 - ml2 - self.J2z + self.J1x + self.J2x + self.J1y*sinP2 + self.J1z*sinP2)*sinT*cosT*thetadot*psidot
 
         C = np.array([[(self.J1y - self.J1z)*sinP*cosP*((thetadot**2) - cosT2*(psidot**2)) + ((self.J1y - self.J1z)*(cosP2 - sinP2) - self.J1x)*cosT*thetadot*psidot],
-                      [(2*(self.J1z - self.J1y)*sinP*cosP*phidot*thetadot) + ((((self.J1y - self.J1z)*(cosP2 - sinP2)) + self.J1x)*cosT*phidot*psidot) - (0.5*N33*(psidot**2))],
+                      [2*(self.J1z - self.J1y)*sinP*cosP*phidot*thetadot + ((self.J1y - self.J1z)*(cosP2 - sinP2) + self.J1x)*cosT*phidot*psidot - 0.5*N33*(psidot**2)],
                       [line1 + line2 + line3 + line4],
                      ])
         
@@ -164,7 +166,7 @@ class HummingbirdDynamics:
 
         # Return the partialP array
         return np.array([[0],
-                         [((self.m1*self.ell1) + (self.m2*self.ell2))*P.g*cosT],
+                         [(self.m1*self.ell1 + self.m2*self.ell2)*P.g*cosT],
                          [0],
                         ])
     
@@ -197,7 +199,7 @@ class HummingbirdDynamics:
         # Return the tau matrix
         return np.array([[torque],
                         [self.ellT*(force)*cosP],
-                        [(self.ellT*(force)*cosT*sinP) - (torque*sinT)]])
+                        [self.ellT*(force)*cosT*sinP - torque*sinT]])
     
     def _B(self):
         # FIXME Fill in this function
@@ -205,7 +207,7 @@ class HummingbirdDynamics:
         
         # Return the B matrix
         beta = 0.001
-        return beta*np.eye(3)
+        return (beta*np.eye(3))
 
 
 def saturate(u, limit):
