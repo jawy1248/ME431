@@ -64,6 +64,7 @@ zdd_eom = result[zdd]
 thetadd_eom = result[thetadd]
 
 eoms = Matrix([[zdd_eom],[thetadd_eom]])
+display("EOMs: ")
 display(Math(vlatex(eoms)))
 
 svf = Matrix([[zdd_eom], [thetadd_eom], [zd], [thetad]])

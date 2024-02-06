@@ -82,8 +82,8 @@ inputs = Matrix([[F], [tau]])
 A = svf.jacobian(states)
 B = svf.jacobian(inputs)
 
-A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (tau, 0.0), (theta, 0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
-B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (tau, 0.0), (theta, 0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
+A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
+B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
 
 display("Linear EOMs (A) then (B):")
 display(Math(vlatex(A_lin)))
