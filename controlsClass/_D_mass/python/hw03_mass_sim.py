@@ -7,8 +7,8 @@ from dataPlotter import dataPlotter
 from massDynamics import massDynamics
 
 # instantiate reference input classes
-reference = signalGenerator(amplitude=0.5, frequency=0.2)
-fRef = signalGenerator(amplitude=5, frequency=0.1)
+reference = signalGenerator(0.5, 0.2)
+fRef = signalGenerator(5, 0.1)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()

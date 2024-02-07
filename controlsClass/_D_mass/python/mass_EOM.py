@@ -2,7 +2,7 @@
 
 # Imports
 import sympy as sp
-from sympy import sin, cos, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
+from sympy import eye, sin, cos, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
 from sympy.physics.vector import dynamicsymbols
 from sympy.physics.vector.printing import vpprint, vlatex
 from IPython.display import Math, display
@@ -67,5 +67,15 @@ display("Linear EOMs (A) then (B):")
 display(Math(vlatex(A_lin)))
 display(Math(vlatex(B_lin)))
 
+# Getting T.F.
+C = Matrix([[1, 0]])
+D = Matrix([[0]])
+I = eye(2)
+s = symbols('s')
+
+TF = simplify(C @ (s*I - A_lin).inv() @ B_lin + D)
+
+display("TF:")
+display(Math(vlatex(TF)))
 
 # %%

@@ -7,10 +7,10 @@ from dataPlotter import dataPlotter
 from VTOLDynamics import Dynamics
 
 # instantiate reference input classes
-zRef = signalGenerator(amplitude=0.5, frequency=0.2)
-hRef = signalGenerator(amplitude=0.5, frequency=0.2)
-fr_Ref = signalGenerator(amplitude=2.0, frequency=0.8, y_offset=7.36)
-fl_Ref = signalGenerator(amplitude=2.0, frequency=0.75, y_offset=7.34)
+zRef = signalGenerator(0.5, 0.2)
+hRef = signalGenerator(0.5, 0.2)
+fr_Ref = signalGenerator(2.0, 0.8, 7.36)
+fl_Ref = signalGenerator(2.0, 0.75, 7.34)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()

@@ -2,11 +2,12 @@
 import numpy as np
 # Initial Conditions
 phi0 = 0.0 * np.pi / 180  # roll angle in rads
-theta0 = 0.0 * np.pi / 180  # pitch angle in rads
+theta0 = 0 * np.pi / 180  # pitch angle in rads
 psi0 = 0.0 * np.pi / 180  # yaw angle in rads
 phidot0 = 0.0              # roll rate in rads/sec
 thetadot0 = 0.0         # pitch rate in rads/sec
 psidot0 = 0.0              # yaw rate in rads/sec
+
 # Physical parameters of the hummingbird known to the controller
 g = 9.81
 ell1 = 0.247
@@ -28,7 +29,11 @@ m3 = 0.1905
 J3x = 0.0002222
 J3y = 0.0001956
 J3z = 0.000027
-km = g * (m1 * ell1 + m2 * ell2) / ellT  # need to find this experimentally for hardware
+km = g * (m1 * ell1 + m2 * ell2) / ellT  # need to find this experimentally
+Fe = (m1 * ell1 * g + m2 * ell2 * g) / ellT
+JT = m1 * ell1**2 + m2 * ell2**2 + J2z + m3 * (ell3x**2 + ell3y**2)
+b_theta = ellT/(m1 * ell1**2 + m2 * ell2**2 + J1y + J2y)
+b_psi = ellT * Fe / (JT + J1z)
 
 # mixing matrix
 unmixing = np.array([[1.0, 1.0], [d, -d]]) # converts fl and fr (LR) to force and torque (FT)
@@ -36,7 +41,7 @@ mixing = np.linalg.inv(unmixing) # converts force and torque (FT) to fl and fr (
 
 # Simulation Parameters
 t_start = 0.0  # Start time of simulation
-t_end = 10.0  # End time of simulation
+t_end = 100.0  # End time of simulation
 Ts = 0.01  # sample time for simulation
 t_plot = 0.1  # the plotting and animation is updated at this rate
 # saturation limits
