@@ -65,21 +65,25 @@ thetadd_eom = result[thetadd]
 
 eoms = Matrix([[zdd_eom],[thetadd_eom]])
 display("EOMs: ")
-display(Math(vlatex(eoms)))
+display(Math(vlatex(simplify(eoms))))
 
-svf = Matrix([[zdd_eom], [thetadd_eom], [zd], [thetad]])
+gTerm = (3*g*m1*z*cos(theta))/(ell**2*m2 + 3*m1*z**2)
+svf = Matrix([[zdd_eom], [simplify(thetadd_eom + gTerm)], [zd], [thetad]])
 states = Matrix([[zd], [thetad], [z], [theta]])
 inputs = Matrix([[F]])
 
 A = svf.jacobian(states)
 B = svf.jacobian(inputs)
 
-A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell)), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8), (z, 0)]))
-B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell)), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8), (z, 0)]))
+A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell))]))
+B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell))]))
+
+A_full = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell)), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8), (z, 0)]))
+B_full = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (theta, 0), (F, (2*m1*g*z + ell*m2*g)/(2*ell)), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8), (z, 0)]))
 
 display("Linear EOMs (A) then (B):")
-display(Math(vlatex(A_lin)))
-display(Math(vlatex(B_lin)))
+display(Math(vlatex(A_full)))
+display(Math(vlatex(B_full)))
 
 # Getting T.F.
 C = Matrix([[0, 0, 1, 0], [0, 0, 0, 1]])
@@ -90,6 +94,8 @@ s = symbols('s')
 TF = simplify(C @ (s*I - A_lin).inv() @ B_lin + D)
 
 display("TF:")
-display(Math(vlatex(TF)))
+TF = simplify(TF.subs([(z, 0.0)]))
+display(Math(vlatex(simplify(TF))))
+display(Math(vlatex(simplify(TF[0]/TF[1]))))
 
 # %%

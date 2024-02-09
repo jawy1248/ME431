@@ -73,7 +73,7 @@ D = Matrix([[0]])
 I = eye(2)
 s = symbols('s')
 
-TF = simplify(C @ (s*I - A_lin).inv() @ B_lin + D)
+TF = simplify(C @ (s*I - A).inv() @ B + D)
 
 display("TF:")
 display(Math(vlatex(TF)))
