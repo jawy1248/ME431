@@ -73,6 +73,7 @@ thetadd_eom = result[thetadd]
 eoms = Matrix([[zdd_eom],[hdd_eom],[thetadd_eom]])
 display(Math(vlatex(eoms)))
 
+# Full
 svf = Matrix([[zdd_eom], [hdd_eom], [thetadd_eom], [zd], [hd], [thetad]])
 states = Matrix([[zd], [hd], [thetad], [z], [h], [theta]])
 inputs = Matrix([[F], [tau]])
@@ -86,9 +87,39 @@ B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 
 A_full = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
 B_full = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
 
+# Longitudinal
+svf_Long = Matrix([[hd], [hdd_eom]])
+states_Long = Matrix([[h], [hd]])
+inputs_Long = Matrix([[F]])
+
+A_Long = svf_Long.jacobian(states_Long)
+B_Long = svf_Long.jacobian(inputs_Long)
+
+A_Long = simplify(A_Long.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2))]))
+B_Long = simplify(B_Long.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2))]))
+
+# Lateral
+svf_Lat = Matrix([[zd], [thetad], [zdd_eom], [thetadd_eom]])
+states_Lat = Matrix([[z], [theta], [zd], [thetad]])
+inputs_Lat = Matrix([[tau]])
+
+A_Lat = svf_Lat.jacobian(states_Lat)
+B_Lat = svf_Lat.jacobian(inputs_Lat)
+
+A_Lat = simplify(A_Lat.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2))]))
+B_Lat = simplify(B_Lat.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2))]))
+
 display("Linear EOMs (A) then (B):")
 display(Math(vlatex(A_full)))
 display(Math(vlatex(B_full)))
+
+display("Linear Longitudinal EOMs (A) then (B):")
+display(Math(vlatex(A_Long)))
+display(Math(vlatex(B_Long)))
+
+display("Linear Lateral EOMs (A) then (B):")
+display(Math(vlatex(A_Lat)))
+display(Math(vlatex(B_Lat)))
 
 # Getting T.F.
 C = Matrix([[0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 1]])
