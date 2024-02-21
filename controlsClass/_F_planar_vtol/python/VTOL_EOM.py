@@ -2,7 +2,7 @@
 
 # Imports
 import sympy as sp
-from sympy import eye, sin, cos, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex
+from sympy import eye, sin, cos, diff, Matrix, symbols, Function, pretty_print, simplify, init_printing, latex, monic
 from sympy.physics.vector import dynamicsymbols
 from sympy.physics.vector.printing import vpprint, vlatex
 from IPython.display import Math, display
@@ -84,8 +84,8 @@ B = svf.jacobian(inputs)
 A_lin = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2))]))
 B_lin = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2))]))
 
-A_full = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
-B_full = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 0.25), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
+A_full = simplify(A.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 1), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
+B_full = simplify(B.subs([(thetad, 0.0), (zd, 0.0), (hd, 0.0), (theta, 0), (tau, 0.0), (F, g*(2*m1 + m2)), (z, 5), (h, 5), (mu, 0.1), (m1, 1), (m2, 0.25), (g, 9.81), (J1, 0.0042), (d, 0.3)]))
 
 # Longitudinal
 svf_Long = Matrix([[hd], [hdd_eom]])
@@ -132,6 +132,21 @@ TF = simplify(C @ (s*I - A_lin).inv() @ B_lin + D)
 display("TF:")
 display(Math(vlatex(TF)))
 display(Math(vlatex(simplify(TF[5]/TF[1]))))
-    
+
+# %% 
+# Solve the block diagram
+k_p, k_d = symbols('k_p, k_d')
+# charEQ = 1/TF[0]
+charEQ = s**2 + (k_d/(2*0.25 + 1))*s + (k_p/(2*0.25 + 1))
+sVar = sp.solve(charEQ, s)
+display(Math(vlatex(sVar)))
+
+# eq1 = sVar[0]
+# eq2 = sVar[1]
+
+# eqn = Matrix([[eq1], [eq2]])
+
+# res = sp.solve(eqn, k_d, k_p)
+# display(Math(vlatex(res)))
 
 #%%

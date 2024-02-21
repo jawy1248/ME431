@@ -78,4 +78,22 @@ TF = simplify(C @ (s*I - A).inv() @ B + D)
 display("TF:")
 display(Math(vlatex(TF)))
 
+# %% 
+# Solve the block diagram
+k_p, k_d = symbols('k_p, k_d')
+# charEQ = 1/TF[0]
+charEQ = s**2 + (0.1 + k_d/5)*s + (0.6 + k_p/5)
+sVar = sp.solve(charEQ, s)
+
+p1 = -1.0
+p2 = -1.5
+
+eq1 = sVar[1] - p1
+eq2 = sVar[0] - p2
+
+eqn = Matrix([[eq1], [eq2]])
+
+res = sp.solve(eqn, k_d, k_p)
+display(Math(vlatex(res)))
+
 # %%

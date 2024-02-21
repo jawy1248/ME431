@@ -13,9 +13,8 @@ class ctrlPD:
         alpha1 = 2.0 * zeta * wn
         alpha0 = wn**2
         # compute PD gains
-        self.kp = alpha0*(P.m * P.ell**2) / 3.0
-        self.kd = (P.m * P.ell**2) \
-                    / 3.0 * (alpha1 - 3.0 * P.b / (P.m * P.ell**2))
+        self.kp = alpha0*P.m - P.k
+        self.kd = alpha1*P.m - P.b
         print('kp: ', self.kp)
         print('kd: ', self.kd)        
 
