@@ -67,8 +67,9 @@ eoms = Matrix([[zdd_eom],[thetadd_eom]])
 display("EOMs: ")
 display(Math(vlatex(simplify(eoms))))
 
-gTerm = (3*g*m1*z*cos(theta))/(ell**2*m2 + 3*m1*z**2)
-svf = Matrix([[zdd_eom], [simplify(thetadd_eom + gTerm)], [zd], [thetad]])
+# gTerm = (3*g*m1*z*cos(theta))/(ell**2*m2 + 3*m1*z**2)
+# svf = Matrix([[zdd_eom], [simplify(thetadd_eom + gTerm)], [zd], [thetad]])
+svf = Matrix([[zdd_eom], [thetadd_eom], [zd], [thetad]])
 states = Matrix([[zd], [thetad], [z], [theta]])
 inputs = Matrix([[F]])
 
@@ -94,7 +95,7 @@ s = symbols('s')
 TF = simplify(C @ (s*I - A_lin).inv() @ B_lin + D)
 
 display("TF:")
-TF = simplify(TF.subs([(z, 0.0)]))
+# TF = simplify(TF.subs([(z, ell/2), (m1, 0.35), (m2, 2), (ell, 0.5), (g, 9.8)]))
 display(Math(vlatex(simplify(TF))))
 display(Math(vlatex(simplify(TF[0]/TF[1]))))
 

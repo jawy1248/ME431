@@ -23,13 +23,13 @@ thetadot0 = 0.0  # initial roll rate
 target0 = 0.0
 
 # Simulation Parameters
-t_start = 0 # Start time of simulation
+t_start = 0  # Start time of simulation
 t_end = 20  # End time of simulation
 Ts = 0.001  # sample time for simulation
-t_plot = 0.1 # the plotting and animation is updated at this rate
+t_plot = 0.1  # the plotting and animation is updated at this rate
 
 # saturation limits
-fmax = 500  # Max Force, N
+fmax = 10  # Max Force, N
 
 # dirty derivative parameters
 # sigma =   # cutoff freq for dirty derivative

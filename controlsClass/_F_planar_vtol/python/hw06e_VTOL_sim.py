@@ -5,7 +5,7 @@ from signalGenerator import signalGenerator
 from VTOLAnimation import VTOLAnimation
 from dataPlotter import dataPlotter
 from VTOLDynamics import Dynamics
-from ctrlPD import ctrlPD
+from ctrlPD_6e import ctrlPD
 
 # instantiate reference input classes
 hRef = signalGenerator(1, 0.08)
