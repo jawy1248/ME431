@@ -30,6 +30,7 @@ while t < P.t_end:  # main simulation loop
         # set variables
         zr, hr = zRef.step(t), hRef.step(t)
         dR, dL, n = dRef.random(t), dRef.random(t), nRef.random(t)
+        # dR, dL, n = 0, 0, 0
 
         u = ctrlPID.update(zr, hr, y+n)
         if dL != 0 and dR != 0:
