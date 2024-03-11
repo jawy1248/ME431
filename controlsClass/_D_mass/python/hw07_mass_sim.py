@@ -17,6 +17,7 @@ dataPlot = dataPlotter()
 animation = massAnimation()
 mass = massDynamics(0.2)
 ctrlPID = ctrlPID()
+plt.pause(3)
 
 t = P.t_start  # time starts at t_start
 y = mass.h()
