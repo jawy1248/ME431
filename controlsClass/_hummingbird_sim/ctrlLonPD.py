@@ -5,7 +5,7 @@ import hummingbirdParam as P
 class ctrlLonPD:
     def __init__(self):
         # tuning parameters
-        tr_pitch = 1
+        tr_pitch = 0.3
         zeta_pitch = 0.707
 
         # gain calculation
@@ -38,15 +38,13 @@ class ctrlLonPD:
     def update(self, r, y):
         theta_ref = r[0][0]
         theta = y[1][0]
-        force_fl = P.g * (P.m1*P.ell1 + P.m2*P.ell2) / P.ellT
+        self.theta_dot = self.beta * self.theta_dot + (1 - self.beta) * ((theta - self.theta_d1) / P.Ts)
 
         # compute errors
         error_theta = theta_ref - theta
 
-        # update differentiators
-        self.theta_dot = self.beta * self.theta_dot + (1 - self.beta) * ((theta - self.theta_d1) / P.Ts)
-        
         # pitch control
+        force_fl = (P.g * (P.m1*P.ell1 + P.m2*P.ell2) / P.ellT) * np.cos(theta)
         force_unsat = (self.kp_pitch * error_theta) - (self.kd_pitch * self.theta_dot) + force_fl
         force = saturate(force_unsat, -P.force_max, P.force_max)
         torque = 0.

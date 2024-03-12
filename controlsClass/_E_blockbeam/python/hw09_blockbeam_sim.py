@@ -8,7 +8,7 @@ from blockbeamDynamics import blockbeamDynamics
 from ctrlSS_block import ctrlSS
 
 # instantiate reference input classes
-zRef = signalGenerator(0.05, 1)
+zRef = signalGenerator(0.25, 1)
 dRef = signalGenerator(0.003, 0.08, 0.006)
 nRef = signalGenerator(0.005, 0.1)
 

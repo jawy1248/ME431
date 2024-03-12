@@ -51,7 +51,7 @@ class ctrlSS:
         self.theta_dot = self.beta * self.theta_dot + (1 - self.beta) * ((theta - self.theta_d1) / P.Ts)
         state = np.array([[z], [theta], [self.z_dot], [self.theta_dot]])
 
-        Fe = (P.m1 * P.g * z) / P.length + (P.m2 * P.g)/2
+        Fe = P.m2*P.g/2
 
         force_unsat = -self.K @ state + self.kr * z_r
         force_unsat = force_unsat[0][0] + Fe

@@ -34,3 +34,8 @@ class signalGenerator:
         out = self.amplitude * np.sin(2*np.pi*self.frequency*t) \
               + self.y_offset
         return out
+
+    def cos(self, t):
+        out = self.amplitude * np.cos(2*np.pi*self.frequency*t) \
+              + self.y_offset
+        return out
