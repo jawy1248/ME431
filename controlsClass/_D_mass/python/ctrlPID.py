@@ -8,6 +8,7 @@ class ctrlPID:
         zeta = 0.70
         # desired natural frequency
         wn = (0.5*np.pi) / (tr * np.sqrt(1 - zeta**2))
+        print('wn: ', wn)
         alpha1 = 2.0 * zeta * wn
         alpha0 = wn**2
         # compute PD gains

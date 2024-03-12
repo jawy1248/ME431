@@ -5,7 +5,7 @@ from signalGenerator import SignalGenerator
 from hummingbirdAnimation import HummingbirdAnimation
 from dataPlotter import DataPlotter
 from hummingbirdDynamics import HummingbirdDynamics
-from ctrlLonPID import ctrlLonPID
+from ctrlLonPD import ctrlLonPD
 
 # instantiate reference input classes
 thetaRef = SignalGenerator(np.pi/32, 0.1, np.pi/8)
@@ -16,7 +16,7 @@ nRef = SignalGenerator(0.001)
 dataPlot = DataPlotter()
 animation = HummingbirdAnimation()
 dyn = HummingbirdDynamics()
-ctrl = ctrlLonPID()
+ctrl = ctrlLonPD()
 plt.pause(2)
 
 t = P.t_start  # time starts at t_start

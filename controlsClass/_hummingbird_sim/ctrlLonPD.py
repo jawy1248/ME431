@@ -2,12 +2,11 @@ import numpy as np
 import hummingbirdParam as P
 
 
-class ctrlLonPID:
+class ctrlLonPD:
     def __init__(self):
         # tuning parameters
         tr_pitch = 1
         zeta_pitch = 0.707
-        self.ki_pitch = 1
 
         # gain calculation
         b_theta = P.ellT/(P.m1 * P.ell1**2 + P.m2 * P.ell2**2 + P.J1y + P.J2y)
@@ -23,7 +22,6 @@ class ctrlLonPID:
 
         # print gains to terminal
         print('kp_pitch: ', self.kp_pitch)
-        print('ki_pitch: ', self.ki_pitch)
         print('kd_pitch: ', self.kd_pitch)
 
         # sample rate of the controller
@@ -36,8 +34,6 @@ class ctrlLonPID:
         # delayed variables
         self.theta_d1 = 0.
         self.theta_dot = 0.
-        self.integrator_theta = 0.
-        self.error_theta_d1 = 0.  # pitch error delayed by 1
 
     def update(self, r, y):
         theta_ref = r[0][0]
@@ -50,11 +46,8 @@ class ctrlLonPID:
         # update differentiators
         self.theta_dot = self.beta * self.theta_dot + (1 - self.beta) * ((theta - self.theta_d1) / P.Ts)
         
-        # update integrators
-        self.integrator_theta = self.integrator_theta + (P.Ts / 2) * (error_theta + self.error_theta_d1)
-        
         # pitch control
-        force_unsat = (self.kp_pitch * error_theta) + (self.ki_pitch * self.integrator_theta) - (self.kd_pitch * self.theta_dot) + force_fl
+        force_unsat = (self.kp_pitch * error_theta) - (self.kd_pitch * self.theta_dot) + force_fl
         force = saturate(force_unsat, -P.force_max, P.force_max)
         torque = 0.
 
@@ -65,11 +58,9 @@ class ctrlLonPID:
 
         # update all delayed variables
         self.theta_d1 = theta
-        self.error_theta_d1 = error_theta
 
         # return pwm plus reference signals
         return pwm, np.array([[0.], [theta_ref], [0.]])
-
 
 def saturate(u, low_limit, up_limit):
     if isinstance(u, float) is True:

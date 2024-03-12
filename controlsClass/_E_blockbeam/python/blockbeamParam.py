@@ -27,6 +27,19 @@ t_plot = 0.1  # the plotting and animation is updated at this rate
 # saturation limits
 Fmax = 15  # Max Force, N
 
+A = np.array([[0, 0, 1, 0],
+              [0, 0, 0, 1],
+              [0, -g, 0, 0],
+              [(-3*g*m1)/(length**2*m2), 0, 0, 0]])
+B = np.array([[0],
+              [0],
+              [0],
+              [3/(m2*length)]])
+C = np.array([[1, 0, 0, 0],
+              [0, 1, 0, 0]])
+D = np.array([[0],
+              [0]])
+
 # dirty derivative parameters
 # sigma =   # cutoff freq for dirty derivative
 # beta =  # dirty derivative gain
