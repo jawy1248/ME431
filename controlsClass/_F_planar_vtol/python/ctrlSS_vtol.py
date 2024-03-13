@@ -9,13 +9,13 @@ class ctrlSS:
         Ah, Bh, Ch, Dh = P.Ah, P.Bh, P.Ch, P.Dh
 
         #  tuning parameters (h)
-        tr_h = 2        # tuned for faster rise time before saturation.
+        tr_h = 8        # tuned for faster rise time before saturation.
         wn_h = (0.5*np.pi) / (tr_h * np.sqrt(1 - zeta**2))
         char1 = [1, 2*zeta*wn_h, wn_h**2]
         des_poles_long = np.roots(char1)
 
         #  tuning parameters (theta)
-        tr_theta = 0.2          # tuned for faster rise time before saturation.
+        tr_theta = 0.8          # tuned for faster rise time before saturation.
         wn_theta = (0.5*np.pi) / (tr_theta * np.sqrt(1 - zeta**2))
         char2 = [1, 2*zeta*wn_theta, wn_theta**2]
 

@@ -28,7 +28,7 @@ while t < P.t_end:  # main simulation loop
     # update controls and dynamics
     while t < t_next_plot:
         # set variables
-        zr, hr = zRef.step(t), hRef.step(t)
+        zr, hr = zRef.sin(t), hRef.cos(t)
         # dR, dL, n = dRef.random(t), dRef.random(t), nRef.random(t)
         dR, dL, n = 0, 0, 0
 
