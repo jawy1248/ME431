@@ -8,7 +8,7 @@ from blockbeamDynamics import blockbeamDynamics
 from ctrlSS_block import ctrlSS
 
 # instantiate reference input classes
-zRef = signalGenerator(0.25, 1)
+zRef = signalGenerator(0.1, 0.15, 0.15)
 dRef = signalGenerator(0.003, 0.08, 0.006)
 nRef = signalGenerator(0.005, 0.1)
 
@@ -17,7 +17,7 @@ dataPlot = dataPlotter()
 animation = blockbeamAnimation()
 blockbeam = blockbeamDynamics()
 ctrlSS = ctrlSS()
-plt.pause(2)
+plt.pause(5)
 
 t = P.t_start  # time starts at t_start
 y = blockbeam.h()
@@ -27,7 +27,7 @@ while t < P.t_end:  # main simulation loop
     # update controls and dynamics
     while t < t_next_plot:
         # set variables
-        r = zRef.step(t)
+        r = zRef.sin(t)
         # d, n = dRef.random(t), nRef.random(t)
         d, n = 0, 0
 

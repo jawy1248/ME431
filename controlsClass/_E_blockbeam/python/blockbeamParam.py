@@ -22,7 +22,7 @@ thetadot0 = 0.0  # initial angular speed of the beam,rads/s
 t_start = 0  # Start time of simulation
 t_end = 20  # End time of simulation
 Ts = 0.01  # sample time for simulation
-t_plot = 0.1  # the plotting and animation is updated at this rate
+t_plot = 0.04  # the plotting and animation is updated at this rate
 
 # saturation limits
 Fmax = 15  # Max Force, N

@@ -8,8 +8,8 @@ from VTOLDynamics import Dynamics
 from ctrlSS_vtol import ctrlSS
 
 # instantiate reference input classes
-hRef = signalGenerator(2, 0.08, 4)
-zRef = signalGenerator(2.5, 0.08, 3)
+hRef = signalGenerator(2, 0.1, 3)
+zRef = signalGenerator(2, 0.1, 3)
 dRef = signalGenerator(0.3, 0.08, 0.1)
 nRef = signalGenerator(0.05, 0.1)
 
@@ -18,7 +18,7 @@ dataPlot = dataPlotter()
 animation = VTOLAnimation()
 VTOL = Dynamics()
 ctrlSS = ctrlSS()
-plt.pause(2)
+plt.pause(5)
 
 t = P.t_start  # time starts at t_start
 y = VTOL.h()
@@ -28,7 +28,8 @@ while t < P.t_end:  # main simulation loop
     # update controls and dynamics
     while t < t_next_plot:
         # set variables
-        zr, hr = zRef.sin(t), hRef.cos(t)
+
+        zr, hr = zRef.cos(t), hRef.sin(t)
         # dR, dL, n = dRef.random(t), dRef.random(t), nRef.random(t)
         dR, dL, n = 0, 0, 0
 

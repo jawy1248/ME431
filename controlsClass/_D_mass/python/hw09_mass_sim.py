@@ -17,7 +17,7 @@ dataPlot = dataPlotter()
 animation = massAnimation()
 mass = massDynamics()
 ctrlSS = ctrlSS()
-plt.pause(2)
+plt.pause(5)
 
 t = P.t_start  # time starts at t_start
 y = mass.h()
@@ -27,7 +27,7 @@ while t < P.t_end:  # main simulation loop
     # update controls and dynamics
     while t < t_next_plot:
         # set variables and update dynamics
-        r = zRef.step(t)
+        r = zRef.sin(t)
         # d, n = dRef.random(t), nRef.random(t)
         d, n = 0, 0
 
