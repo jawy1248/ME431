@@ -45,7 +45,7 @@ class Dynamics:
         hd = state[4][0]
         thetad = state[5][0]
 
-        zdd = (-np.sin(theta)*(fr+fl) - self.mu*zd)/(2*self.mr + self.mc)
+        zdd = (-np.sin(theta)*(fr+fl) - self.mu*zd + P.F_wind)/(2*self.mr + self.mc)
         hdd = (np.cos(theta)*(fr+fl) - self.g*(2*self.mr + self.mc))/(2*self.mr + self.mc)
         thetadd = (self.d*(fr-fl))/(self.Jc + 2*(self.d**2)*self.mr)
 
