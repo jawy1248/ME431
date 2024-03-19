@@ -1,21 +1,23 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import VTOLParam as P
+import blockbeamParam as P
 from signalGenerator import signalGenerator
-from VTOLAnimation import VTOLAnimation
+from blockbeamAnimation import blockbeamAnimation
 from dataPlotter import dataPlotter
-from VTOLDynamics import Dynamics
-from ctrlPD_6f import ctrlPD
+from blockbeamDynamics import blockbeamDynamics
+from ctrlSS_int_block import ctrlSS
 
 # instantiate reference input classes
-hRef = signalGenerator(1, 0.08)
-zRef = signalGenerator(2.5, 0.08, 3)
+zRef = signalGenerator(0.1, 0.1, 0.15)
+dRef = signalGenerator(1, 0)
+nRef = signalGenerator(0, 0)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()
-animation = VTOLAnimation()
-VTOL = Dynamics()
-ctrlPD = ctrlPD()
+animation = blockbeamAnimation()
+blockbeam = blockbeamDynamics(0.2)
+ctrlSS = ctrlSS()
+plt.pause(5)
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
@@ -24,17 +26,16 @@ while t < P.t_end:  # main simulation loop
     # update controls and dynamics
     while t < t_next_plot:
         # set variables
-        zr = zRef.square(t)
-        hr = hRef.step(t)
-        u = ctrlPD.update(zr, hr, VTOL.state)
-        VTOL.update(u)
-        F = u[0][0] + u[1][0]
-        Tau = P.d * (u[1][0] - u[0][0])
+        r = zRef.square(t)
+        d, n = dRef.step(t), 0
+        # d, n = 0, 0
+
+        u = ctrlSS.update(r, blockbeam.state+n)
+        y = blockbeam.update(u+d)
         t = t + P.Ts
-    
     # update animation
-    animation.update(VTOL.state)
-    dataPlot.update(t, VTOL.state, zr, hr, F, Tau)
+    animation.update(blockbeam.state)
+    dataPlot.update(t, r, blockbeam.state, u)
     plt.pause(0.001)  # allow time for animation to draw
 
 # Keeps the program from closing until the user presses a button.

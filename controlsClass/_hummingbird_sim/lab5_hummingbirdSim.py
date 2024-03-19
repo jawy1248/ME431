@@ -8,7 +8,7 @@ from hummingbirdDynamics import HummingbirdDynamics
 from ctrlLonPD import ctrlLonPD
 
 # instantiate reference input classes
-thetaRef = SignalGenerator(np.pi/32, 0.1, np.pi/8)
+thetaRef = SignalGenerator(np.pi/6, 0.1)
 dRef = SignalGenerator(0.01)
 nRef = SignalGenerator(0.001)
 

@@ -1,20 +1,23 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import blockbeamParam as P
+import massParam as P
 from signalGenerator import signalGenerator
-from blockbeamAnimation import blockbeamAnimation
+from massAnimation import massAnimation
 from dataPlotter import dataPlotter
-from blockbeamDynamics import blockbeamDynamics
-from ctrlPD_6f import ctrlPD
+from massDynamics import massDynamics
+from ctrlSS_int_mass import ctrlSS
 
 # instantiate reference input classes
-zRef = signalGenerator(0.25, 1)
+zRef = signalGenerator(1, 0.1)
+dRef = signalGenerator(0.25, 0)
+nRef = signalGenerator(0, 0)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()
-animation = blockbeamAnimation()
-blockbeam = blockbeamDynamics()
-ctrlPD = ctrlPD()
+animation = massAnimation()
+mass = massDynamics(0.2)
+ctrlSS = ctrlSS()
+plt.pause(5)
 
 t = P.t_start  # time starts at t_start
 while t < P.t_end:  # main simulation loop
@@ -22,14 +25,16 @@ while t < P.t_end:  # main simulation loop
     t_next_plot = t + P.t_plot
     # update controls and dynamics
     while t < t_next_plot:
-        # set variables
-        zr = zRef.step(t)
-        u = ctrlPD.update(zr, blockbeam.state)
-        blockbeam.update(u)
+        # set variables and update dynamics
+        r = zRef.square(t)
+        d, n = dRef.step(t), 0
+
+        u = ctrlSS.update(r, mass.state+n)
+        y = mass.update(u+d)
         t = t + P.Ts
     # update animation
-    animation.update(blockbeam.state)
-    dataPlot.update(t, zr, blockbeam.state, u)
+    animation.update(mass.state)
+    dataPlot.update(t, r, mass.state, u)
     plt.pause(0.001)  # allow time for animation to draw
 
 # Keeps the program from closing until the user presses a button.
