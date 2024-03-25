@@ -27,7 +27,7 @@ while t < P.t_end:  # main simulation loop
     # update controls and dynamics
     while t < t_next_plot:
         # set variables
-        zr, hr = zRef.square(t), hRef.square(t)
+        zr, hr = zRef.random(t), hRef.random(t)
         dR, dL, n = 0, 0, 0
 
         u = ctrlSS.update(zr, hr, VTOL.state+n)
