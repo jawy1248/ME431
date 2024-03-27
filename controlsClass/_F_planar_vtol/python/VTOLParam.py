@@ -8,7 +8,7 @@ Jc = 0.0042  # kg m^2
 d = 0.3  # m
 mu = 0.1  # kg/s
 g = 9.81  # m/s^2
-F_wind = 0.1 # wind disturbance force is zero in initial homeworks
+F_wind = 0.  # wind disturbance force is zero in initial homeworks
 
 # parameters for animation
 length = 6.0
@@ -24,7 +24,7 @@ target0 = 0.0
 
 # Simulation Parameters
 t_start = 0  # Start time of simulation
-t_end = 20  # End time of simulation
+t_end = 10  # End time of simulation
 Ts = 0.001  # sample time for simulation
 t_plot = 0.04  # the plotting and animation is updated at this rate
 
@@ -35,7 +35,7 @@ Ah = np.array([[0, 1],
                [0, 0]])
 Bh = np.array([[0],
                [1/(2*mr + mc)]])
-Ch = np.array([1, 0])
+Ch = np.array([[1, 0]])
 Dh = np.array([[0]])
 
 A = np.array([[0, 0, 1, 0],
