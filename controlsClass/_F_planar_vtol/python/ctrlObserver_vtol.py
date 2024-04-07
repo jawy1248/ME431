@@ -6,16 +6,16 @@ class ctrlObserver:
     def __init__(self):
         # ******************** Tunable Params ********************
         zeta = 0.707
-        int_pole_z = -3.0
-        int_pole_h = -3.0
+        int_pole_z = -5.0
+        int_pole_h = -5.0
 
         tr_h = 2
         tr_t = 0.2
 
         M_z = 10
-        MO_z = 30
-        MO_h = 20
-        MO_t = 20
+        MO_z = 10
+        MO_h = 10
+        MO_t = 10
         # ********************************************************
 
         tr_z = M_z*tr_t
@@ -90,18 +90,28 @@ class ctrlObserver:
 
         # Observer Design
         wnO_z = (0.5*np.pi) / (trO_z * np.sqrt(1 - zeta**2))
+        zeta = 0.95
+        # wnO_z = 10*0.9905
         wnO_t = (0.5*np.pi) / (trO_t * np.sqrt(1 - zeta**2))
+        # wnO_t = 10*13.38
 
-        desO_charZ = [1, 2 * zeta * wnO_z, wnO_z ** 2]
-        desO_charT = [1, 2 * zeta * wnO_t, wnO_t ** 2]
+        desO_charZ = [1, 2 * zeta * wnO_z, wnO_z**2]
+        desO_charT = [1, 2 * zeta * wnO_t, wnO_t**2]
 
         desO_char = np.convolve(desO_charZ, desO_charT)
         desO_poles = np.roots(desO_char)
+
+        print("Obs Poles Lat: ", desO_poles)
 
         if np.linalg.matrix_rank(cnt.ctrb(self.A.T, self.C.T)) != 4:
             print("The Lateral system is not observerable")
         else:
             self.L = cnt.place(self.A.T, self.C.T, desO_poles).T
+
+        # self.L.T[0][1] *= -1
+        # self.L.T[0][3] *= -1
+        # self.L.T[1][0] *= -1
+
         print('L^T: ', self.L.T)
 
         # -------------------- Misc Variables --------------------
@@ -142,7 +152,6 @@ class ctrlObserver:
 
         T_unsat = -self.K @ x_hat_lat - self.ki * self.integrator_z
         T_unsat = T_unsat[0]
-        # T_unsat = 0
 
         # Combine forces and torques, saturate and return
         Fr_unsat = 0.5*F_unsat + 0.5*T_unsat/P.d
