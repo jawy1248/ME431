@@ -4,48 +4,52 @@ import VTOLParam as P
 from signalGenerator import signalGenerator
 from VTOLAnimation import VTOLAnimation
 from dataPlotter import dataPlotter
-from dataPlotterObserver import dataPlotterObserver
 from VTOLDynamics import Dynamics
-from ctrlObserver_vtol import ctrlObserver
+from dataPlotterObserver import dataPlotterObserver
+from ctrlObserver import ctrlObserver
 
-# instantiate reference input classes
-hRef = signalGenerator(2, 0.1, 3)
-zRef = signalGenerator(2, 0.1, 3)
-dRef = signalGenerator(0, 0)
-nRef = signalGenerator(0, 0)
+# instantiate VTOL, controller, and reference classes
+VTOL = Dynamics()
+controller = ctrlObserver()
+z_reference = signalGenerator(4.0, 0.02, 2.0)
+h_reference = signalGenerator(3.0, 0.03, 2.0)
+F_disturbance = signalGenerator(1.0)
+tau_disturbance = signalGenerator(0.1)
+z_noise = signalGenerator(0.01)
+h_noise = signalGenerator(0.01)
+th_noise = signalGenerator(0.01)
 
 # instantiate the simulation plots and animation
 dataPlot = dataPlotter()
+dataPlotObserver = dataPlotterObserver()
 animation = VTOLAnimation()
-dataPlotObs = dataPlotterObserver()
-VTOL = Dynamics()
-ctrl = ctrlObserver()
-plt.pause(5)
 
 t = P.t_start  # time starts at t_start
-y = VTOL.h()
+y = VTOL.h()  # output of system at start of simulation
 while t < P.t_end:  # main simulation loop
-    # Progress dynamics between plot samples
+
+    # Propagate dynamics in between plot samples
     t_next_plot = t + P.t_plot
-    # update controls and dynamics
-    while t < t_next_plot:
-        # set variables
-        zr, hr = zRef.square(t), hRef.square(t)
-        dR, dL, n = 0, 0, 0
 
-        u, x_hat_lat, x_hat_lon = ctrl.update(zr, hr, y)
-        y = VTOL.update(u)
+    while t < t_next_plot:  # updates control and dynamics at faster simulation rate
+        h_ref = h_reference.square(t)
+        z_ref = z_reference.square(t)
+        r = np.array([[z_ref], [h_ref]])  # reference input
+        d = np.array([[0.0], [0.0]])
+        n = np.array([[z_noise.random(t)],
+                    [h_noise.random(t)],
+                    [th_noise.random(t)]])
+        u, xhat_lat, xhat_lon = controller.update(r, y + n)  # update controller
+        force = u[0][0] + u[1][0]
+        torque = P.d * (u[1][0] - u[0][0])
+        y = VTOL.update(P.mixing @ (u + d))  # propagate system
+        t = t + P.Ts  # advance time by Ts
 
-        F = u[0][0] + u[1][0]
-        Tau = P.d * (u[0][0] - u[1][0])
-
-        t = t + P.Ts
-    
-    # update animation
-    animation.update(VTOL.state)
-    dataPlot.update(t, VTOL.state, zr, hr, F, Tau)
-    dataPlotObs.update(t, VTOL.state, x_hat_lat, x_hat_lon)
-    plt.pause(0.001)  # allow time for animation to draw
+    # update animation and data plots
+    dataPlot.update(t, VTOL.state, z_ref, h_ref, force, torque)
+    dataPlotObserver.update(t, VTOL.state, xhat_lat, xhat_lon)
+    animation.update(VTOL.state, z_ref)
+    plt.pause(0.0001)  # the pause causes the figure to be displayed during the simulation
 
 # Keeps the program from closing until the user presses a button.
 print('Press key to close')
