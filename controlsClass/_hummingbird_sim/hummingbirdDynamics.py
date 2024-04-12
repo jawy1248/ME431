@@ -45,7 +45,7 @@ class HummingbirdDynamics:
         y = self.h()  # return the corresponding output
         return y
 
-    def f(self, state, pwm):
+    def f(self, state, pwm, d=0):
         # Return xdot = f(x,u)
         pwm_left = pwm[0][0]
         pwm_right = pwm[1][0]
@@ -58,7 +58,7 @@ class HummingbirdDynamics:
 
         # calculate the total force, and total torque, 
         # from the left and right PWM commands
-        force = self.km * (pwm_left + pwm_right)
+        force = self.km * (pwm_left + pwm_right) + d
         torque = self.d * self.km * (pwm_left - pwm_right)
         
         # calculate the generalized force vector "tau"

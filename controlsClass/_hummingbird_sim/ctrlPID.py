@@ -11,39 +11,34 @@ class ctrlPID:
     def __init__(self):
         # ******************** Tuning Parameters ********************
         # ----- Pitch -----
-        tr_pitch = 1
+        tr_pitch = 0.5
         zeta_pitch = 0.707
-        self.ki_pitch = 1
+        self.ki_pitch = 0.3
 
         # ----- Roll/Yaw -----
-        M = 10
-        tr_yaw = 1
-        tr_roll = M * tr_yaw
-        zeta_yaw = 0.707
-        zeta_roll = 0.707
-        self.ki_yaw = 1
+        M = 15
+        tr_roll = 0.1
+        tr_yaw = M * tr_roll
+        zeta_yaw = 0.9
+        zeta_roll = 0.9
+        self.ki_yaw = 0.2
         # ***********************************************************
 
         # ********************** Finding Gains **********************
         # ----- Pitch -----
-        b_theta = P.ellT/(P.m1 * P.ell1**2 + P.m2 * P.ell2**2 + P.J1y + P.J2y)
-
         wn_pitch = (0.5*np.pi) / (tr_pitch * np.sqrt(1 - zeta_pitch**2))
 
         alpha1_pitch = 2 * zeta_pitch * wn_pitch
         alpha2_pitch = wn_pitch**2
 
-        self.kd_pitch = alpha1_pitch / b_theta
-        self.kp_pitch = alpha2_pitch / b_theta
+        self.kd_pitch = alpha1_pitch / P.b_theta
+        self.kp_pitch = alpha2_pitch / P.b_theta
 
         print('kd_pitch: ', self.kd_pitch)
         print('kp_pitch: ', self.kp_pitch)
         print('ki_pitch: ', self.ki_pitch)
 
         # ----- Roll/Yaw -----
-        self.Fe = P.g * (P.m1 * P.ell1 + P.m2 * P.ell2) / P.ellT
-        b_yaw = (P.ellT * self.Fe) / (P.JT + P.J1z)
-
         wn_roll = (0.5*np.pi) / (tr_roll * np.sqrt(1 - zeta_roll**2))
         wn_yaw = (0.5*np.pi) / (tr_yaw * np.sqrt(1 - zeta_yaw**2))
 
@@ -54,8 +49,8 @@ class ctrlPID:
 
         self.kd_roll = alpha1_roll * P.J1x
         self.kp_roll = alpha2_roll * P.J1x
-        self.kd_yaw = alpha1_yaw / b_yaw
-        self.kp_yaw = alpha2_yaw / b_yaw
+        self.kd_yaw = alpha1_yaw / P.b_psi
+        self.kp_yaw = alpha2_yaw / P.b_psi
 
         print('kd_roll: ', self.kd_roll)
         print('kp_roll: ', self.kp_roll)
@@ -70,7 +65,7 @@ class ctrlPID:
         self.Ts = P.Ts
 
         # Dirty Derivative Values
-        sigma = 0.01  # cutoff freq for dirty derivative
+        sigma = 0.02  # cutoff freq for dirty derivative
         self.beta = (2 * sigma - self.Ts) / (2 * sigma + self.Ts)
 
         # Delayed Variables
@@ -109,10 +104,11 @@ class ctrlPID:
 
         # Update Derivative/Integrator
         self.theta_dot = self.beta * self.theta_dot + (1 - self.beta) * ((theta - self.theta_d1) / P.Ts)
-        self.integrator_theta = self.integrator_theta + (P.Ts / 2) * (error_theta + self.error_theta_d1)
+        if np.abs(self.theta_dot) < 0.3:
+            self.integrator_theta = self.integrator_theta + (P.Ts / 2) * (error_theta + self.error_theta_d1)
         
         # Force Control
-        force_unsat = (self.kp_pitch * error_theta) + (self.ki_pitch * self.integrator_theta) - (self.kd_pitch * self.theta_dot) + self.Fe
+        force_unsat = (self.kp_pitch * error_theta) + (self.ki_pitch * self.integrator_theta) - (self.kd_pitch * self.theta_dot) + P.Fe
         force = saturate(force_unsat, -P.force_max, P.force_max)
         # ************************************************************
 
@@ -123,7 +119,8 @@ class ctrlPID:
 
         # Update Derivative/Integrator
         self.psi_dot = self.beta * self.psi_dot + (1 - self.beta) * ((psi - self.psi_d1) / P.Ts)
-        self.integrator_psi = self.integrator_psi + (P.Ts / 2) * (error_psi + self.error_psi_d1)
+        if np.abs(self.psi_dot) < 0.3:
+            self.integrator_psi = self.integrator_psi + (P.Ts / 2) * (error_psi + self.error_psi_d1)
 
         # Get Phi Ref
         phi_ref = (self.kp_yaw * error_psi) + (self.ki_yaw * self.integrator_psi) - (self.kd_yaw * self.psi_dot)
@@ -151,7 +148,7 @@ class ctrlPID:
         self.error_theta_d1 = error_theta
         self.psi_d1 = psi
         self.error_psi_d1 = error_psi
-        self.phi_d1 = theta
+        self.phi_d1 = phi
         self.error_phi_d1 = error_phi
 
         # Return PWM and References

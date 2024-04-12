@@ -11,12 +11,12 @@ class ctrlPD:
     def __init__(self):
         # ******************** Tuning Parameters ********************
         # ----- Pitch -----
-        tr_pitch = 0.3
+        tr_pitch = 0.2
         zeta_pitch = 0.707
 
         # ----- Roll/Yaw -----
         M = 10
-        tr_roll = 0.05
+        tr_roll = 0.1
         tr_yaw = M * tr_roll
         zeta_roll = 0.707
         zeta_yaw = 0.707
@@ -24,22 +24,18 @@ class ctrlPD:
 
         # ********************** Finding Gains **********************
         # ----- Pitch -----
-        b_theta = P.b_theta
-
         wn_pitch = (0.5*np.pi) / (tr_pitch * np.sqrt(1 - zeta_pitch**2))
 
         alpha1_pitch = 2 * zeta_pitch * wn_pitch
         alpha2_pitch = wn_pitch**2
 
-        self.kd_pitch = alpha1_pitch / b_theta
-        self.kp_pitch = alpha2_pitch / b_theta
+        self.kd_pitch = alpha1_pitch / P.b_theta
+        self.kp_pitch = alpha2_pitch / P.b_theta
 
         print('kd_pitch: ', self.kd_pitch)
         print('kp_pitch: ', self.kp_pitch)
 
         # ----- Roll/Yaw -----
-        b_yaw = P.b_psi
-
         wn_roll = (0.5*np.pi) / (tr_roll * np.sqrt(1 - zeta_roll**2))
         wn_yaw = (0.5*np.pi) / (tr_yaw * np.sqrt(1 - zeta_yaw**2))
 
@@ -50,8 +46,8 @@ class ctrlPD:
 
         self.kd_roll = alpha1_roll * P.J1x
         self.kp_roll = alpha2_roll * P.J1x
-        self.kd_yaw = alpha1_yaw / b_yaw
-        self.kp_yaw = alpha2_yaw / b_yaw
+        self.kd_yaw = alpha1_yaw / P.b_psi
+        self.kp_yaw = alpha2_yaw / P.b_psi
 
         print('kd_roll: ', self.kd_roll)
         print('kp_roll: ', self.kp_roll)
@@ -85,7 +81,7 @@ class ctrlPD:
         self.error_psi_d1 = 0
         # ***********************************************************
 
-    def update(self, r, y):
+    def update(self, r, y, d):
         # **************** Pull Out Known States/Refs ****************
         phi = y[0][0]
         theta = y[1][0]
@@ -103,9 +99,8 @@ class ctrlPD:
         self.theta_dot = self.beta * self.theta_dot + (1 - self.beta) * ((theta - self.theta_d1) / P.Ts)
 
         # Force Control
-        Fe = P.Fe * np.cos(theta)
-        force_unsat = (self.kp_pitch * error_theta) - (self.kd_pitch * self.theta_dot) + Fe
-        force = saturate(force_unsat, -P.force_max, P.force_max)
+        force_unsat = (self.kp_pitch * error_theta) - (self.kd_pitch * self.theta_dot) + P.Fe
+        force = saturate(force_unsat, -P.force_max, P.force_max) + d
         # ************************************************************
 
         # ********************* Roll/Yaw Controller *********************
